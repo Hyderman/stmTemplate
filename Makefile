@@ -1,6 +1,6 @@
 .PHONY: configure build clean flash
 
-PROJECT_NAME ?= f401Template
+PROJECT_NAME ?= firmware
 BUILD_DIR ?= build
 BUILD_TYPE ?= Debug
 FIRMWARE := $(BUILD_DIR)/$(PROJECT_NAME).elf

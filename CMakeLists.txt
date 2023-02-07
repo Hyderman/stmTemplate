@@ -1,9 +1,10 @@
 # STM32 Minimal CMake project for C/C++ projects
 cmake_minimum_required(VERSION 3.24)
 include(./gcc-arm-none-eabi.cmake)
-###############################################################################
+
+# ##############################################################################
 # Set project name and source code folder location
-project(f401Template)
+project(firmware)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Project)
 
@@ -21,7 +22,7 @@ set(CPU_PARAMETERS
 set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/CubeMx/startup_stm32f401xe.s)
 set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/CubeMx/STM32F401RETx_FLASH.ld)
 
-###############################################################################
+# ##############################################################################
 set(EXECUTABLE ${CMAKE_PROJECT_NAME})
 
 enable_language(C CXX ASM)
@@ -32,7 +33,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-###############################################################################
+# ##############################################################################
 set(STM32CUBEMX_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/${MCU_FAMILY}_HAL_Driver/Inc
@@ -51,12 +52,13 @@ file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS
     ${PROJECT_DIR}/*.c)
 
 add_executable(${EXECUTABLE}
-    ${STM32CUBEMX_SOURCES} 
+    ${STM32CUBEMX_SOURCES}
     ${PROJECT_SOURCES}
     ${STARTUP_SCRIPT})
 
 target_compile_definitions(${EXECUTABLE} PRIVATE
-    #$<$<CONFIG:Debug>:DEBUG>
+
+    # $<$<CONFIG:Debug>:DEBUG>
     ${MCU_MODEL}
     USE_HAL_DRIVER)
 
@@ -65,9 +67,10 @@ target_include_directories(${EXECUTABLE} SYSTEM PRIVATE
 
 target_include_directories(${EXECUTABLE} PRIVATE
     ${PROJECT_INCLUDE_DIRECTORIES})
-###############################################################################
+
+# ##############################################################################
 target_compile_options(${EXECUTABLE} PRIVATE
-${CPU_PARAMETERS}
+    ${CPU_PARAMETERS}
     -Wall
     -Wextra
     -Wpedantic
@@ -78,11 +81,11 @@ ${CPU_PARAMETERS}
     -fno-common
     -Wno-unused-parameter
     $<$<COMPILE_LANGUAGE:CXX>:
-        -Wconversion # STM libraries!
-        -Wno-volatile
-        -Wold-style-cast
-        -Wuseless-cast
-        -Wsuggest-override>
+    -Wconversion # STM libraries!
+    -Wno-volatile
+    -Wold-style-cast
+    -Wuseless-cast
+    -Wsuggest-override>
     $<$<CONFIG:Debug>:-Og -g3 -ggdb>
     $<$<CONFIG:Release>:-Og -g0>)
 
@@ -104,7 +107,7 @@ add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${EXECUTABLE}> ${EXECUTABLE}.hex
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${EXECUTABLE}> ${EXECUTABLE}.bin)
 
-if (${DUMP_ASM})
+if(${DUMP_ASM})
     add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
         COMMAND ${CMAKE_OBJDUMP} -D $<TARGET_FILE:${EXECUTABLE}> > ${EXECUTABLE}.s)
 endif()
